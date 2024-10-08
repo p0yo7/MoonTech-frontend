@@ -1,0 +1,194 @@
+/* Estilos generales */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .project-container {
+    padding: 20px;
+    background-color: white;
+    min-height: 100vh;
+  }
+  
+  /* Barra de progreso (timeline) */
+  .timeline-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 0;
+    margin-bottom: 30px;
+  }
+  
+  .timeline-dot {
+    width: 20px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 50%;
+    margin-right: 20px;
+  }
+  
+  .timeline-dot.active {
+    background-color: #556b2f; /* Color verde militar para fase activa */
+  }
+  
+  /* Título de la sección */
+  .section-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  /* Lista de requerimientos */
+  .requirements-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Estilo de cada requerimiento */
+  .requirement-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    transition: opacity 0.3s;
+  }
+  
+  .requirement-item.approved {
+    opacity: 0.6;
+  }
+  
+  .requirement-text {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  /* Botones de approve/modify */
+  .buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .approve-button {
+    background-color: #556b2f;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .modify-button {
+    background-color: #ccc;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  /* Botón de "Complete" */
+  .complete-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #ccc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+  }
+  
+  /* Pop-up de confirmación */
+  .popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .popup {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    position: relative;
+  }
+  
+  .popup h2 {
+    color: white;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .popup p {
+    color: white;
+    margin-bottom: 20px;
+  }
+  
+  .popup-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .yes-button {
+    background-color: #556b2f;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .no-button {
+    background-color: #ccc;
+    color: black;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  /* Cerrar pop-up */
+  .close-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    color: white;
+  }
+  
+  /* Estilo para la imagen del búho y el texto */
+  .owl-container-popup {
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+  }
+  
+  .owl-image-popup {
+    width: 100px;
+    height: auto;
+  }
+  
+  .owl-text {
+    position: absolute;
+    top: -40px;
+    right: 10px;
+    color: #333;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  

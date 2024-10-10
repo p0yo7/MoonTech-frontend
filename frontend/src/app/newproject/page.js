@@ -14,7 +14,10 @@ const NuevoProyecto = () => {
   const [headerText, setHeaderText] = useState("Let's create a new project!");
   const [dropdownVisible, setDropdownVisible] = useState({});
   const router = useRouter(); // Inicializamos useRouter
-
+  // Recibir los users por area
+  // Recibir las areas
+  // Hacer post a la ruta de backend para crear el proyecto
+  // 
   const projectAreas = ["Alimenticia", "Agrícola", "Textil", "Manufactura", "Tecnología"];
   const companyAreas = {
     "Comercial": ["User 1", "User 2", "User 3"],

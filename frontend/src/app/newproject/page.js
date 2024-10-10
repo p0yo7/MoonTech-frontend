@@ -17,7 +17,7 @@ const NuevoProyecto = () => {
 
   const projectAreas = ["Alimenticia", "Agrícola", "Textil", "Manufactura", "Tecnología"];
   const companyAreas = {
-    "Comercial": ["User 1", "User 2"],
+    "Comercial": ["User 1", "User 2", "User 3"],
     "GDM": ["User 3", "User 4"],
     "Dev": ["User 5", "User 6"],
     "Finanzas": ["User 7", "User 8"],

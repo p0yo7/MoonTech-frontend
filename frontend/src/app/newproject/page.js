@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import Image from 'next/image';
+import { useRouter } from 'next/navigation'; // Importamos useRouter
 import owlImage from '../assets/neo.png';
 import "./globals.css";
 
@@ -12,6 +13,7 @@ const NuevoProyecto = () => {
   const [selectedUsers, setSelectedUsers] = useState({});
   const [headerText, setHeaderText] = useState("Let's create a new project!");
   const [dropdownVisible, setDropdownVisible] = useState({});
+  const router = useRouter(); // Inicializamos useRouter
 
   const projectAreas = ["Alimenticia", "Agrícola", "Textil", "Manufactura", "Tecnología"];
   const companyAreas = {
@@ -91,6 +93,14 @@ const NuevoProyecto = () => {
     setHeaderText("Almost there! Ready to start?");
   };
 
+  const handleProjectCreation = () => {
+    // Aquí harías la llamada a la API para crear el proyecto
+    const projectId = 123; // Simulamos que el proyecto tiene este ID
+    router.push(`/projects/${projectId}`); // Redirigir a la página del proyecto
+  };
+  const handleClose = () => {
+    
+  }
   return (
     <div className="new-project-container">
       <div className="header">
@@ -185,7 +195,7 @@ const NuevoProyecto = () => {
           <div className="step-content">
             <h2>Are you sure you want to create a new project?</h2>
             <div className="confirm-buttons">
-              <button className="yes-button">Yes</button>
+              <button className="yes-button" onClick={handleProjectCreation}>Yes</button>
               <button className="no-button" onClick={handleClose}>No</button>
             </div>
           </div>
@@ -196,3 +206,5 @@ const NuevoProyecto = () => {
 };
 
 export default NuevoProyecto;
+
+// Agregar la parte de que no se quiere crear el proyecto y te regresa al menu anterior

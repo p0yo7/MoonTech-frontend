@@ -4,31 +4,70 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import "./globals.css";
-
+import Cookies from 'js-cookie';
 // Import assets
 import moontechLogo from '../assets/moontech.png';
 import backgroundVideo from '../assets/animationone.mp4';
 
 export default function Login() {
+  const data = Cookies.get('username'); // Maneja Cookies
   const router = useRouter();
   const [showLogin, setShowLogin] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showError, setShowError] = useState(false); // Estado para controlar el error
-
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   useEffect(() => {
     const timer = setTimeout(() => setShowLogin(true), 1000);
     return () => clearTimeout(timer);
   }, []);
 
-  const handleLogin = () => {
-    if (username !== "" && password !== "") {
-      setShowError(false); // Escondemos el mensaje de error si el login es exitoso
-      router.push('/menu');
-    } else {
-      setShowError(true); // Mostramos el mensaje de error si las credenciales son incorrectas
-    }
+  const decodeJWT = (token) => {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      window
+        .atob(base64)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
+    return JSON.parse(jsonPayload);
   };
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      const response = await fetch('http://localhost:8080/login/native', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error de autenticación');
+      }
+      const data = await response.json();
+      Cookies.set('authToken', data.token, { expires: 7 }); // Maneja Cookies
+      const claims = decodeJWT(data.token);
+      Cookies.set('userID', claims.user_id, { expires: 7 }); // Maneja Cookies
+      Cookies.set('role', claims.role, { expires: 7 }); // Maneja Cookies
+      Cookies.set('team', claims.team, { expires: 7 }); // Maneja Cookies
+      Cookies.set('user_first_name', claims.user_first_name, { expires: 7 }); // Maneja Cookies
+      // Redirigir al dashboard si el inicio de sesión es exitoso
+      router.push('/menu'); // Redirigir al dashboard
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="login-page">

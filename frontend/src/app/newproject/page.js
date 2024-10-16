@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation'; // Importamos useRouter
 import owlImage from '../assets/neo.png';
 import "./globals.css";
+import Cookies from "js-cookie";
 
 const NuevoProyecto = () => {
   const [step, setStep] = useState(1);
@@ -91,16 +92,62 @@ const NuevoProyecto = () => {
     };
   }, []);
 
+  // const decodeJWT = (token) => {
+  //   const base64Url = token.split(".")[1];
+  //   const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  //   const jsonPayload = decodeURIComponent(
+  //     window
+  //       .atob(base64)
+  //       .split("")
+  //       .map(function (c) {
+  //         return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+  //       })
+  //       .join("")
+  //   );
+  //   return JSON.parse(jsonPayload);
+  // }
   const handleFinalStep = () => {
     setStep(4);
     setHeaderText("Almost there! Ready to start?");
   };
-
-  const handleProjectCreation = () => {
-    // Aquí harías la llamada a la API para crear el proyecto
-    const projectId = 123; // Simulamos que el proyecto tiene este ID
-    router.push(`/projects/${projectId}`); // Redirigir a la página del proyecto
+  const handleProjectCreation = async () => {
+    // const claims = decodeJWT(Cookies.get("authToken"));
+    const request = {
+      ProjectName: title,
+      AreaID: 1,
+      // OwnerID: parseInt(Cookies.get("userID"), 10), no se necesita
+      CompanyID: 1, // Reemplazar con el ID de la empresa actual
+      StartDate: new Date().toISOString().split("T")[0], // Fecha actual en formato YYYY-MM-DD
+    };
+    try {
+      const response = await fetch('http://localhost:8080/createProject', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `${Cookies.get("authToken")}`,
+        },
+        body: JSON.stringify(request),
+      });
+  
+      // Verificar si la respuesta es correcta (código 200-299)
+      if (!response.ok) {
+        console.error("Error al crear el proyecto:", response);
+        return; // Salir si hay un error
+      }
+  
+      // Intentar extraer el cuerpo como JSON
+      const data = await response.json();
+  
+      console.log("Mensaje:", data.message); // Accede al mensaje de éxito
+      console.log("ID del Proyecto:", data.project); // Accede al ID del proyecto
+  
+      // Redirigir al proyecto creado
+      router.push(`/projects/${data.project}`);
+    } catch (error) {
+      console.error("Error de red:", error); // Manejo de errores de red
+    }
   };
+  
   const handleClose = () => {
     
   }

@@ -1,0 +1,172 @@
+/* Estilos completos actualizados para NuevoProyecto */
+
+.new-project-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: Arial, sans-serif;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.header-text {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: black;
+}
+
+.owl-container {
+  flex-shrink: 0;
+}
+
+.owl-image {
+  width: 50px;
+  height: auto;
+}
+
+.content {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: black; 
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.input-field, .dropdown-select {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.arrow-button {
+  align-self: flex-end;
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.areas-container {
+  display: flex;
+  gap: 1rem;
+}
+
+.areas-selection, .selected-users {
+  flex: 1;
+  color: black;
+}
+
+.company-area-section {
+  margin-bottom: 1rem;
+}
+
+.company-area-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.selected-users {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.selected-users h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.selected-area {
+  margin-bottom: 0.5rem;
+}
+
+.selected-area h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.selected-user {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  background-color: #e9ecef;
+  margin-bottom: 0.25rem;
+  border-radius: 3px;
+}
+
+.remove-user {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1rem;
+}
+
+.yes-button, .no-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.yes-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.no-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Estilos para pantallas más pequeñas */
+@media (max-width: 600px) {
+  .areas-container {
+    flex-direction: column;
+  }
+
+  .areas-selection, .selected-users {
+    width: 100%;
+  }
+}
+.close-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: red; /* Color del icono */
+  padding: 5px; /* Espaciado */
+  border-radius: 50%; /* Hace que el fondo tenga bordes redondeados */
+  transition: background-color 0.3s ease; /* Transición suave */
+}
+
+.close-button:hover {
+  background-color: #edebe6; /* Fondo gris al hacer hover */
+}

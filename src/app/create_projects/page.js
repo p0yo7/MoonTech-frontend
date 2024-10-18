@@ -14,6 +14,8 @@ const Projects = () => {
   const [dropdownVisible, setDropdownVisible] = useState({});
   const router = useRouter();
 
+  // Obtener Teams
+  // Obtener usuarios por team
   const projectAreas = ["Alimenticia", "Agrícola", "Textil", "Manufactura", "Tecnología"];
   const companyAreas = {
     "Comercial": ["User 1", "User 2", "User 3"],

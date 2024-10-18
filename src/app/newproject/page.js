@@ -142,7 +142,7 @@ const NuevoProyecto = () => {
       console.log("ID del Proyecto:", data.project); // Accede al ID del proyecto
   
       // Redirigir al proyecto creado
-      router.push(`/projects/${data.id}`);
+      router.push(`/projects/${data.id}/requirements`);
     } catch (error) {
       console.error("Error de red:", error); // Manejo de errores de red
     }

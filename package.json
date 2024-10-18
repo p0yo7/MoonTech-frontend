@@ -13,10 +13,12 @@
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^6.1.2",
     "@mui/material": "^6.1.2",
+    "bootstrap": "^5.3.3",
     "js-cookie": "^3.0.5",
     "next": "14.2.14",
     "next-svgr": "^0.0.2",
     "react": "^18",
+    "react-bootstrap": "^2.10.5",
     "react-dom": "^18",
     "react-router-dom": "^6.26.2"
   },

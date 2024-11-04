@@ -40,3 +40,7 @@ a {
     color-scheme: dark;
   }
 }
+.scroll-container {
+  max-height: 700px; /* Ajusta el valor según lo necesario */
+  overflow-y: auto;
+}

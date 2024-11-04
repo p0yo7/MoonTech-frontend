@@ -233,6 +233,10 @@ body, html {
       grid-template-columns: 1fr;
     }
   }
+  .scroll-container {
+    max-height: 500px; /* Ajusta el valor según lo necesario */
+    overflow-y: auto;  /* Permite el scroll vertical */
+  }
   
   
   

@@ -1,156 +1,204 @@
-import React, { useState } from 'react';
-import { Card, Button, Form } from 'react-bootstrap';
+'use client'
+import { useState } from 'react'
+import {
+  Card,
+  CardContent,
+  CardActions,
+  Typography,
+  Button,
+  TextField,
+  IconButton,
+  Menu,
+  MenuItem,
+  Box
+} from '@mui/material'
+import {
+  MoreVert as MoreVertIcon,
+  Check as CheckIcon,
+  Close as CloseIcon
+} from '@mui/icons-material'
 
-const RequirementCard = ({ requirement }) => {
-  const [comment, setComment] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedText, setEditedText] = useState('');
+export default function TarjetaRequerimiento({ requirement = { requirement_id: '', requirement_text: '', requirement_approved: false, requirement_timestamp: '' } }) {
+  const [estado, setEstado] = useState('pendiente')
+  const [comment, setComment] = useState('')
+  const [anchorEl, setAnchorEl] = useState(null)
 
+  const handleAprobar = () => setEstado('aprobado')
+  const handleRechazar = () => setEstado('rechazado')
   const handleCommentChange = (e) => {
-    setComment(e.target.value);
-  };
-
+    setComment(e.target.value)
+  }
   const handleSendComment = () => {
-    if (!comment.trim()) return;
-    console.log("Comment sent:", {
-      requirementId: requirement.requirement_id,
-      comment: comment
-    });
-    setComment('');
-  };
+    console.log("Comment sent:", comment)
+    setComment('') // Limpiar el campo de comentario
+  }
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleMenuClose = () => {
+    setAnchorEl(null)
+  }
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-    setEditedText(requirement.requirement_text);
-  };
-
-  const handleSaveEdit = () => {
-    if (!editedText.trim()) return;
-    console.log("Saving edit:", {
-      requirementId: requirement.requirement_id,
-      newText: editedText
-    });
-    setIsEditing(false);
-  };
-
-  const handleCancelEdit = () => {
-    setIsEditing(false);
-    setEditedText('');
-  };
-
-  const formattedDate = new Date(requirement.requirement_timestamp).toLocaleString('es-ES', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-
+  const formattedDate = new Date(requirement.requirement_timestamp).toLocaleString()
+  // console.log('Requerimiento:', requerimiento)
   return (
-    <Card style={{ 
-      backgroundColor: '#f8f9fa', 
-      borderRadius: '5px',
-      marginBottom: '1rem',
-      boxShadow: '0 1px 3px rgba(0,0,0,0.12)'
-    }}>
-      <Card.Body style={{ padding: '15px' }}>
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'flex-start'
-        }}>
-          <div style={{ flex: 1 }}>
-            {isEditing ? (
-              <Form.Control
-                as="textarea"
-                value={editedText}
-                onChange={(e) => setEditedText(e.target.value)}
-                style={{ marginBottom: '10px' }}
-              />
-            ) : (
-              <Card.Title style={{ 
-                fontSize: '16px', 
-                color: '#0366d6', 
-                marginBottom: '5px',
-                wordBreak: 'break-word'
-              }}>
-                #{requirement.requirement_id} {requirement.requirement_text}
-              </Card.Title>
-            )}
-            <Card.Text style={{ 
-              fontSize: '14px', 
-              color: '#586069', 
-              marginBottom: '5px' 
-            }}>
-              Opened on {formattedDate}
-            </Card.Text>
-            {requirement.requirement_approved && (
-              <span style={{
-                backgroundColor: '#28a745',
-                color: 'white',
-                padding: '2px 8px',
-                borderRadius: '12px',
-                fontSize: '12px',
-                marginLeft: '8px'
-              }}>
-                Approved
-              </span>
-            )}
-          </div>
-          <div>
-            {isEditing ? (
-              <>
-                <Button 
-                  variant="success" 
-                  size="sm" 
-                  onClick={handleSaveEdit}
-                  style={{ marginRight: '5px' }}
-                >
-                  Save
-                </Button>
-                <Button 
-                  variant="secondary" 
-                  size="sm" 
-                  onClick={handleCancelEdit}
-                >
-                  Cancel
-                </Button>
-              </>
-            ) : (
-              <Button 
-                variant="outline-primary" 
-                size="sm" 
-                onClick={handleEditClick}
-                style={{ marginRight: '10px' }}
-              >
-                Edit
-              </Button>
-            )}
-          </div>
-        </div>
-
-        <Form style={{ marginTop: '15px' }}>
-          <Form.Group controlId={`comment-${requirement.requirement_id}`} style={{ marginBottom: '5px' }}>
-            <Form.Control
-              type="text"
-              placeholder="Add a comment..."
-              value={comment}
-              onChange={handleCommentChange}
-              size="sm"
-            />
-          </Form.Group>
-          <Button 
-            variant="primary" 
-            size="sm" 
-            onClick={handleSendComment}
-            disabled={!comment.trim()}
+    <Card 
+      sx={{ 
+        maxWidth: 400, 
+        bgcolor: 'grey.50',
+        border: '2px solid',
+        borderColor: 'grey.300',
+        borderRadius: 2,
+        boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+        '&:hover': {
+          boxShadow: '0 6px 12px rgba(0,0,0,0.15)',
+          borderColor: 'primary.main',
+        },
+        position: 'relative',
+        overflow: 'visible'
+      }}
+    >
+      <CardContent>
+        <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
+          <Box>
+            <Typography 
+              variant="h6" 
+              color="primary"
+              sx={{ 
+                fontWeight: 'bold',
+                pb: 0.5
+              }}
+            >
+              #{requirement.requirement_id} {requirement.nombre || 'Sin nombre'}
+            </Typography>
+            <Typography 
+              variant="body2" 
+              color="text.secondary"
+              sx={{ 
+                borderBottom: '1px solid',
+                borderColor: 'grey.200',
+                pb: 1
+              }}
+            >
+              Abierto el {formattedDate}
+            </Typography>
+          </Box>
+          <IconButton 
+            size="small" 
+            onClick={handleMenuOpen}
+            sx={{
+              bgcolor: 'grey.100',
+              '&:hover': {
+                bgcolor: 'grey.200'
+              }
+            }}
           >
-            Publish
-          </Button>
-        </Form>
-      </Card.Body>
+            <MoreVertIcon />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+          >
+            <MenuItem onClick={handleMenuClose}>Editar</MenuItem>
+          </Menu>
+        </Box>
+        <Typography 
+          variant="body2" 
+          color="text.secondary" 
+          mb={2}
+          sx={{
+            bgcolor: 'grey.100',
+            p: 1.5,
+            borderRadius: 1
+          }}
+        >
+          {requirement.requirement_text || 'Sin descripción'}
+        </Typography>
+        <TextField
+          fullWidth
+          size="small"
+          placeholder="Añadir un comentario..."
+          value={comment}
+          onChange={handleCommentChange}
+          sx={{ 
+            mb: 1,
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderColor: 'grey.300',
+                borderWidth: 2
+              },
+              '&:hover fieldset': {
+                borderColor: 'primary.main',
+              }
+            }
+          }}
+        />
+        <Button 
+          size="small" 
+          variant="contained" 
+          onClick={handleSendComment}
+          sx={{
+            boxShadow: 2,
+            '&:hover': {
+              boxShadow: 4
+            }
+          }}
+        >
+          Publicar
+        </Button>
+      </CardContent>
+      <CardActions sx={{ justifyContent: 'space-between', px: 2, pb: 2 }}>
+        <Button
+          size="small"
+          variant="outlined"
+          startIcon={<CheckIcon />}
+          onClick={handleAprobar}
+          disabled={estado !== 'pendiente'}
+          sx={{
+            borderWidth: 2,
+            '&:not(:disabled)': {
+              '&:hover': {
+                borderWidth: 2
+              }
+            }
+          }}
+        >
+          Aprobar
+        </Button>
+        <Button
+          size="small"
+          variant="outlined"
+          startIcon={<CloseIcon />}
+          onClick={handleRechazar}
+          disabled={estado !== 'pendiente'}
+          sx={{
+            borderWidth: 2,
+            '&:not(:disabled)': {
+              '&:hover': {
+                borderWidth: 2
+              }
+            }
+          }}
+        >
+          Rechazar
+        </Button>
+      </CardActions>
+      {estado !== 'pendiente' && (
+        <Box
+          sx={{
+            textAlign: 'center',
+            py: 1,
+            bgcolor: estado === 'aprobado' ? 'success.light' : 'error.light',
+            color: estado === 'aprobado' ? 'success.dark' : 'error.dark',
+            borderBottomLeftRadius: 'inherit',
+            borderBottomRightRadius: 'inherit',
+            fontWeight: 'bold'
+          }}
+        >
+          {estado === 'aprobado' ? 'Aprobado' : 'Rechazado'}
+        </Box>
+      )}
     </Card>
-  );
-};
-
-export default RequirementCard;
+  )
+}

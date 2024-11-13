@@ -1,32 +1,42 @@
 /* Estilos generales */
 body, html {
+    height: 100%;
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
     background-color: #f5f5f5;
   }
+  /* Root Next.js Container */
+#__next {
+  height: 100%;
+}
+  /* Project Container */
+.project-container {
+  display: flex;
+  height: 100vh;
+  width: 100vW;
+  overflow: hidden;
+  flex-direction: column;
+  margin: 0 auto;
+  padding: 20px;
+}
   
-  .project-container {
-    display: flex;
-    height: 100vh;
-    overflow: hidden;
-  }
-  
-  /* Estilos de la sidebar expandible */
-  .sidebar {
-    background-color: #333;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 60px; /* Ancho reducido cuando está colapsado */
-    transition: width 0.3s ease;
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 1;
-  }
+  /* Expandable Sidebar */
+.sidebar {
+  background-color: #333;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 60px;
+  transition: width 0.3s ease;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
   
   .sidebar.expanded {
     width: 200px; /* Ancho cuando está expandido */
@@ -41,45 +51,61 @@ body, html {
     margin-top: 10px;
   }
   
-  .sidebar-logo {
-    width: 40px; /* Tamaño reducido del logo */
-    margin-bottom: 40px;
-    transition: width 0.3s ease;
-  }
+  /* Sidebar Logo */
+.sidebar-logo {
+  width: 40px;
+  margin-bottom: 40px;
+  transition: width 0.3s ease;
+}
   
-  .sidebar.expanded .sidebar-logo {
-    width: 150px; /* Tamaño del logo expandido */
-  }
+.sidebar.expanded .sidebar-logo {
+  width: 150px;
+}
   
-  .sidebar-links {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
   
-  .sidebar-button {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
+.sidebar-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
   
   .sidebar-button i {
     margin-right: 10px;
   }
   
-  /* Estilos de la sección principal (proyectos) */
-  .main-content {
-    flex-grow: 1;
-    padding: 20px;
-    background-color: white;
-    margin-left: 60px; /* Margen cuando la sidebar está colapsada */
-    transition: margin-left 0.3s ease;
-  }
+  /* Main Content Area */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.3s ease;
+  background-color: #f5f5f5;
+}
   
+.container {
+  width: 100%;
+  max-width: 1200px; /* Ajusta este valor según el ancho deseado */
+  margin: auto;
+}
+
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Ajusta el número de columnas */
+  gap: 20px;
+}
+
   .sidebar.expanded ~ .main-content {
     margin-left: 200px; /* Margen cuando la sidebar está expandida */
   }
@@ -180,9 +206,9 @@ body, html {
   .project-container {
     display: flex;
     flex-direction: column;
-    max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+    padding-left: 50px;
   }
   
   .main-content {
@@ -222,16 +248,97 @@ body, html {
     border-radius: 3px;
   }
   
-  @media (max-width: 768px) {
-    .requirements-grid {
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  @media (min-width: 1200px) {
+    .cards-container {
+        grid-template-columns: repeat(3, 1fr);
     }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+    .cards-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
+    .cards-container {
+        grid-template-columns: 1fr;
+    }
+}
+  .project-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
   }
   
-  @media (max-width: 576px) {
-    .requirements-grid {
-      grid-template-columns: 1fr;
-    }
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    transition: margin-left 0.3s ease;
+  }
+  
+  .main-content.expanded {
+    margin-left: 240px;
+  }
+  
+  .header {
+    position: sticky;
+    top: 0;
+    padding: 16px 0;
+    z-index: 10;
+  }
+  
+  .actions-container {
+    position: sticky;
+    top: 100px;
+    /* background-color: white; */
+    padding: 16px 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .requirements-container, .tasks-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    width: 100%;
+    gap: 20px;
+    padding: 20px 0;
+    overflow-y: auto;
+  }
+  
+  .add-item-button, .next-stage-button {
+    margin-bottom: 20px !important;
+  }
+  
+  /* Asegurarse que las tarjetas de tareas y requerimientos tengan altura máxima */
+  .requirement-card, .task-card {
+    height: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  /* Estilizar la barra de scroll */
+  .main-content::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .main-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  .main-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+  
+  .main-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
   }
   .scroll-container {
     max-height: 500px; /* Ajusta el valor según lo necesario */

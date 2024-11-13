@@ -100,7 +100,7 @@ const Projects = () => {
       // Prepare the project data based on the Projects struct in models.go
       const projectData = {
         project_name: title,
-        OwnerID: 1, // Reemplazar con el ID del usuario actual
+        OwnerID: parseInt(Cookies.get("userID"),10), // Reemplazar con el ID del usuario actual
         CompanyID: 1, // Reemplazar con el ID de la compañía actual
         AreaID: parseInt(projectArea), // Asumiendo que projectArea es el AreaID
         start_date: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD

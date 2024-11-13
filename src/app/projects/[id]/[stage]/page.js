@@ -1,14 +1,16 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import ExpandableNavbar from '../../../../components/navbar';
-import RequirementCard from '../../../../components/requirements';
-import NewRequirementModal from '../../../../components/newrequirement';
+import { useParams, useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import ExpandableNavbar from "../../../../components/navbar";
+import RequirementCard from "../../../../components/requirements";
+import NewRequirementModal from "../../../../components/newrequirement";
+import TarjetaTarea from "../../../../components/tasks";
+import { Button } from "@mui/material";  // Updated import for Button
 import "./globals.css";
 
-const ProjectPage = ({ params }) => {
-  const { id: projectId, stage } = params;
+const ProjectPage = () => {
+  const { id: projectId, stage } = useParams();
   const router = useRouter();
   const [projectName, setProjectName] = useState("");
   const [projectCompany, setProjectCompany] = useState("");
@@ -28,11 +30,18 @@ const ProjectPage = ({ params }) => {
   const handleCloseModal = () => setModalOpen(false);
   const toggleSidebar = () => setSidebarExpanded(!isSidebarExpanded);
 
-  const handleNextStage = () => {
-    const currentIndex = stages.indexOf(stage);
-    if (currentIndex < stages.length - 1) {
-      const nextStage = stages[currentIndex + 1];
-      router.push(`/projects/${projectId}/${nextStage}`);
+  const getProjectData = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/Project/${projectId}`);
+      if (!response.ok) {
+        throw new Error(`Error fetching project data: ${response.statusText}`);
+      }
+      const data = await response.json();
+      setProjectName(data.projectInfo.project_name);
+      setProjectCompany(data.projectInfo.company_name);
+    } catch (error) {
+      console.error("Error fetching project data:", error);
+      setError(error.message);
     }
   };
 
@@ -60,8 +69,9 @@ const ProjectPage = ({ params }) => {
 
     const endpoints = {
       requirements: `http://localhost:8080/Project/${projectId}/Requirements`,
-      planning: `http://localhost:8080/Project/${projectId}/planning`,
-      estimation: `http://localhost:8080/Project/${projectId}/getEstimation`
+      planning: `http://localhost:8080/project/${projectId}/planning`,
+      estimation: `http://localhost:8080/project/${projectId}/getEstimation`,
+      tasks: `http://localhost:8080/project/${projectId}/tasks`,
     };
 
     const endpoint = endpoints[stage];
@@ -74,10 +84,10 @@ const ProjectPage = ({ params }) => {
     try {
       setLoading(true);
       const response = await fetch(endpoint, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `${Cookies.get("authToken")}`,
+          "Content-Type": "application/json",
+          Authorization: `${Cookies.get("authToken")}`,
         },
       });
 
@@ -86,18 +96,8 @@ const ProjectPage = ({ params }) => {
       }
 
       const result = await response.json();
-      
-      switch(stage) {
-        case 'requirements':
-          setRequirements(result.data || []);
-          break;
-        case 'planning':
-          setPlanningData(result.data || []);
-          break;
-        case 'estimation':
-          setEstimationData(result.data || []);
-          break;
-      }
+      console.log(result);
+      setData(result);
     } catch (error) {
       console.error(`Error fetching ${stage} data:`, error);
       setError(error.message);
@@ -106,167 +106,14 @@ const ProjectPage = ({ params }) => {
     }
   };
 
-  const handleAddRequirement = (newRequirement) => {
-    setRequirements((prevRequirements) => [...prevRequirements, {
-      requirement_id: newRequirement.id,
-      requirement_text: newRequirement.description,
-      requirement_approved: false,
-      requirement_timestamp: new Date().toISOString()
-    }]);
+  const handleAddItem = (newItem) => {
+    setData((prevData) => [...prevData, newItem]);
     handleCloseModal();
   };
 
-  const renderStageContent = () => {
-    switch(stage) {
-      case 'requirements':
-        return (
-          <>
-            <div style={{ 
-              padding: '0 20px 20px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button 
-                  onClick={handleOpenModal}
-                  style={{
-                    backgroundColor: '#0366d6',
-                    color: 'white',
-                    padding: '8px 16px',
-                    borderRadius: '4px',
-                    border: 'none',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Add Requirement
-                </button>
-                <button 
-                  onClick={handleNextStage}
-                  style={{
-                    backgroundColor: '#28a745',
-                    color: 'white',
-                    padding: '8px 16px',
-                    borderRadius: '4px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '5px'
-                  }}
-                >
-                  Next: Planning Phase
-                  <span style={{ fontSize: '20px' }}>→</span>
-                </button>
-              </div>
-              <div style={{ 
-                backgroundColor: '#f0f0f0', 
-                padding: '8px 16px', 
-                borderRadius: '4px',
-                color: '#666'
-              }}>
-                Requirements Phase
-              </div>
-            </div>
-
-            <div className="scroll-container" style={{ padding: '0 20px' }}>
-              <div style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
-                {requirements.map((requirement) => (
-                  <RequirementCard
-                    key={requirement.requirement_id}
-                    requirement={requirement}
-                  />
-                ))}
-              </div>
-            </div>
-          </>
-        );
-
-      case 'planning':
-        return (
-          <>
-            <div style={{ 
-              padding: '0 20px 20px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <button 
-                  onClick={handleNextStage}
-                  style={{
-                    backgroundColor: '#28a745',
-                    color: 'white',
-                    padding: '8px 16px',
-                    borderRadius: '4px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '5px'
-                  }}
-                >
-                  Next: Estimation Phase
-                  <span style={{ fontSize: '20px' }}>→</span>
-                </button>
-              </div>
-              <div style={{ 
-                backgroundColor: '#f0f0f0', 
-                padding: '8px 16px', 
-                borderRadius: '4px',
-                color: '#666'
-              }}>
-                Planning Phase
-              </div>
-            </div>
-
-            <div className="scroll-container" style={{ padding: '0 20px' }}>
-              <div style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
-                {planningData.map((item) => (
-                  <div key={item.id} className="planning-card">
-                    {/* Contenido del planning */}
-                    {item.description} {/* Por ejemplo */}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        );
-
-      case 'estimation':
-        return (
-          <>
-            <div style={{ 
-              padding: '0 20px 20px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <div style={{ 
-                backgroundColor: '#f0f0f0', 
-                padding: '8px 16px', 
-                borderRadius: '4px',
-                color: '#666'
-              }}>
-                Estimation Phase
-              </div>
-            </div>
-
-            <div className="scroll-container" style={{ padding: '0 20px' }}>
-              <div style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
-                {estimationData.map((item) => (
-                  <div key={item.id} className="estimation-card">
-                    {/* Contenido de la estimación */}
-                    {item.estimated_value} {/* Por ejemplo */}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        );
-
-      default:
-        return <div>Invalid stage</div>;
+  const handleNextStage = () => {
+    if (stage === "requirements") {
+      router.push(`/projects/${projectId}/tasks`);
     }
   };
 
@@ -274,6 +121,41 @@ const ProjectPage = ({ params }) => {
     getProjectData();
     fetchStageData();
   }, [projectId, stage]);
+
+  const renderContent = () => {
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error}</p>;
+
+    if (stage === "tasks") {
+      return (
+        <div className="tasks-container">
+          {Array.isArray(data) &&
+            data.map((task, index) => (
+              <TarjetaTarea
+                key={index}
+                tarea={{
+                  id: task.id || `TASK-${index + 1}`,
+                  titulo: task.title || task.nombre,
+                  descripcion: task.description || task.descripcion,
+                  area: task.area || task.equipo,
+                  tiempo: task.estimated_time || task.tiempo_estimado,
+                  costo: task.cost || task.costo,
+                }}
+              />
+            ))}
+        </div>
+      );
+    } else {
+      return (
+        <div className="requirements-container">
+          {data.map((requirement) => (
+            <RequirementCard key={requirement.requirement_id} requirement={requirement} />
+          ))}
+
+        </div>
+      );
+    }
+  };
 
   return (
     <div className="project-container">
@@ -284,30 +166,35 @@ const ProjectPage = ({ params }) => {
       />
 
       <div className={`main-content ${isSidebarExpanded ? "expanded" : ""}`}>
-        <div className="header" style={{ padding: '20px' }}>
-        <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '10px' }}>
-            Project: {projectName}
-          </h2>
-          <h3 style={{ fontSize: '20px', color: '#666' }}>
+        <div className="header">
+          <h2 style={{ textAlign: "left" }}>Project: {projectName}</h2>
+          <p className="subheader" style={{ textAlign: "left" }}>
             Company: {projectCompany}
-          </h3>
+          </p>
         </div>
 
-        {loading ? (
-          <div>Loading...</div>
-        ) : error ? (
-          <div style={{ color: 'red' }}>Error: {error}</div>
-        ) : (
-          renderStageContent()
-        )}
+        <div className="actions-container">
+          <Button className="add-item-button" onClick={handleOpenModal}>
+            {stage === "tasks" ? "Add Task" : "Add Requirement"}
+          </Button>
+          {stage === "requirements" && (
+            <Button className="next-stage-button" onClick={handleNextStage}>
+              Proceed to Tasks
+            </Button>
+          )}
+        </div>
+
+        {renderContent()}
       </div>
 
-      {isModalOpen && (
-        <NewRequirementModal
-          onClose={handleCloseModal}
-          onAddRequirement={handleAddRequirement}
-        />
-      )}
+      <NewRequirementModal
+        open={isModalOpen}
+        handleClose={handleCloseModal}
+        onAddItem={handleAddItem}
+        projectId={parseInt(projectId,10)}
+        ownerId={parseInt(Cookies.get("userID"),10)}
+        isTask={stage === "tasks"}
+      />
     </div>
   );
 };

@@ -16,60 +16,57 @@ const style = {
   p: 4,
 };
 
-const NewRequirementModal = ({ open, handleClose, projectId, onAddRequirement }) => {
-  const [requirementText, setRequirementText] = useState("");
+const NewRequirementModal = ({ open, handleClose, projectId, ownerId }) => {
+  const [requirementText, setRequirementText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+
+  const postRequirement = async (text) => {
+    const requirementData = {
+      ProjectID: projectId,
+      OwnerID: ownerId,
+      RequirementDescription: text,
+      approved: false
+    };
+    console.log(requirementData);
+    try {
+      const response = await fetch(`http://localhost:8080/createRequirement`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `${Cookies.get('authToken')}`,
+        },
+        body: JSON.stringify(requirementData),
+      });
+
+      console.log(response);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error posting requirement:', error);
+      throw error;
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (isSubmitting) return;
     
+    if (!requirementText.trim()) {
+      return;
+    }
+
     setIsSubmitting(true);
-    
-    const newRequirement = {
-      ProjectID: parseInt(projectId, 10),
-      OwnerID: parseInt(Cookies.get("userID"), 10),
-      RequirementDescription: requirementText,
-      approved: false
-    };
+    setError(null);
 
     try {
-      const response = await fetch('http://localhost:8080/createRequirement', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `${Cookies.get("authToken")}`
-        },
-        body: JSON.stringify(newRequirement),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error al agregar el requerimiento: ${response.status}`);
-      }
-
-      const result = await response.json();
-      
-      // Asegúrate de que el resultado tenga todos los campos necesarios
-      const formattedResult = {
-        ...result,
-        ProjectID: parseInt(projectId, 10),
-        OwnerID: parseInt(Cookies.get("userID"), 10),
-        RequirementDescription: requirementText,
-        approved: false,
-        ...newRequirement // Mantén los datos originales si el servidor no los devuelve
-      };
-
-      // Limpia el formulario
-      setRequirementText("");
-      
-      // Actualiza el estado del padre inmediatamente
-      onAddRequirement(formattedResult);
-      
-      // Cierra el modal
+      await postRequirement(requirementText);
+      setRequirementText('');
       handleClose();
     } catch (error) {
-      console.error("Error:", error);
-      alert("Error al crear el requerimiento. Por favor, intenta de nuevo.");
+      setError('Failed to add requirement. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -90,7 +87,8 @@ const NewRequirementModal = ({ open, handleClose, projectId, onAddRequirement })
             <CloseIcon />
           </button>
         </div>
-        <h2 id="modal-title">Add Requirement</h2>
+       
+        <h2>Add Requirement</h2>
         <form onSubmit={handleSubmit}>
           <TextField
             label="Requirement Text"
@@ -101,15 +99,27 @@ const NewRequirementModal = ({ open, handleClose, projectId, onAddRequirement })
             value={requirementText}
             onChange={(e) => setRequirementText(e.target.value)}
             disabled={isSubmitting}
+            error={!!error}
+            helperText={error}
+            multiline
+            rows={4}
+            placeholder="Enter your requirement description here..."
           />
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px', gap: '8px' }}>
+            <Button 
+              onClick={handleClose}
+              variant="outlined"
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
             <Button 
               type="submit" 
               variant="contained" 
               color="primary"
-              disabled={isSubmitting || !requirementText.trim()}
+              disabled={isSubmitting}
             >
-              {isSubmitting ? 'Adding...' : 'Add'}
+              {isSubmitting ? 'Adding...' : 'Add Requirement'}
             </Button>
           </div>
         </form>

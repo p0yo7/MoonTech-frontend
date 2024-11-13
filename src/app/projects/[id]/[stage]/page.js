@@ -1,15 +1,17 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-const componentsPath = "../../../../components";
-import ExpandableNavbar from '../../../../components/navbar';
-import RequirementCard from '../../../../components/requirements'; // Asegúrate de importar el componente RequirementCard
-import NewRequirementModal from '../../../../components/newrequirement'; // Importa el modal para agregar requerimientos
+import ExpandableNavbar from "../../../../components/navbar";
+import RequirementCard from "../../../../components/requirements";
+import NewRequirementModal from "../../../../components/newrequirement";
+import TarjetaTarea from "../../../../components/tasks";
+import { Button } from "@mui/material";  // Updated import for Button
 import "./globals.css";
 
 const ProjectPage = () => {
   const { id: projectId, stage } = useParams();
+  const router = useRouter();
   const [projectName, setProjectName] = useState("");
   const [projectCompany, setProjectCompany] = useState("");
   const [data, setData] = useState([]);
@@ -23,10 +25,18 @@ const ProjectPage = () => {
   const toggleSidebar = () => setSidebarExpanded(!isSidebarExpanded);
 
   const getProjectData = async () => {
-    const response = await fetch(`http://localhost:8080/Project/${projectId}`);
-    const data = await response.json();
-    setProjectName(data.projectInfo.project_name);
-    setProjectCompany(data.projectInfo.company_name);
+    try {
+      const response = await fetch(`http://localhost:8080/Project/${projectId}`);
+      if (!response.ok) {
+        throw new Error(`Error fetching project data: ${response.statusText}`);
+      }
+      const data = await response.json();
+      setProjectName(data.projectInfo.project_name);
+      setProjectCompany(data.projectInfo.company_name);
+    } catch (error) {
+      console.error("Error fetching project data:", error);
+      setError(error.message);
+    }
   };
 
   const fetchProjectData = async () => {
@@ -35,7 +45,8 @@ const ProjectPage = () => {
     const endpoints = {
       requirements: `http://localhost:8080/Project/${projectId}/Requirements`,
       planning: `http://localhost:8080/project/${projectId}/planning`,
-      estimation: `http://localhost:8080/project/${projectId}/getEstimation`
+      estimation: `http://localhost:8080/project/${projectId}/getEstimation`,
+      tasks: `http://localhost:8080/project/${projectId}/tasks`,
     };
 
     const endpoint = endpoints[stage];
@@ -48,10 +59,10 @@ const ProjectPage = () => {
     try {
       setLoading(true);
       const response = await fetch(endpoint, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `${Cookies.get("authToken")}`,
+          "Content-Type": "application/json",
+          Authorization: `${Cookies.get("authToken")}`,
         },
       });
 
@@ -60,7 +71,8 @@ const ProjectPage = () => {
       }
 
       const result = await response.json();
-      setData(result); // Esto debería ser un array de requerimientos
+      console.log(result);
+      setData(result);
     } catch (error) {
       console.error("Error fetching data:", error);
       setError(error.message);
@@ -69,15 +81,56 @@ const ProjectPage = () => {
     }
   };
 
-  const handleAddRequirement = (newRequirement) => {
-    setData((prevData) => [...prevData, newRequirement]); // Agregar el nuevo requerimiento a la lista
-    handleCloseModal(); // Cerrar el modal después de agregar
+  const handleAddItem = (newItem) => {
+    setData((prevData) => [...prevData, newItem]);
+    handleCloseModal();
+  };
+
+  const handleNextStage = () => {
+    if (stage === "requirements") {
+      router.push(`/projects/${projectId}/tasks`);
+    }
   };
 
   useEffect(() => {
     fetchProjectData();
     getProjectData();
   }, [projectId, stage]);
+
+  const renderContent = () => {
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error}</p>;
+
+    if (stage === "tasks") {
+      return (
+        <div className="tasks-container">
+          {Array.isArray(data) &&
+            data.map((task, index) => (
+              <TarjetaTarea
+                key={index}
+                tarea={{
+                  id: task.id || `TASK-${index + 1}`,
+                  titulo: task.title || task.nombre,
+                  descripcion: task.description || task.descripcion,
+                  area: task.area || task.equipo,
+                  tiempo: task.estimated_time || task.tiempo_estimado,
+                  costo: task.cost || task.costo,
+                }}
+              />
+            ))}
+        </div>
+      );
+    } else {
+      return (
+        <div className="requirements-container">
+          {data.map((requirement) => (
+            <RequirementCard key={requirement.requirement_id} requirement={requirement} />
+          ))}
+
+        </div>
+      );
+    }
+  };
 
   return (
     <div className="project-container">
@@ -89,28 +142,34 @@ const ProjectPage = () => {
 
       <div className={`main-content ${isSidebarExpanded ? "expanded" : ""}`}>
         <div className="header">
-          <h2 style={{ textAlign: 'left' }}>Project: {projectName}</h2>
-          <p className="subheader" style={{ textAlign: 'left' }}>Company: {projectCompany}</p>
+          <h2 style={{ textAlign: "left" }}>Project: {projectName}</h2>
+          <p className="subheader" style={{ textAlign: "left" }}>
+            Company: {projectCompany}
+          </p>
         </div>
 
-        {loading && <p>Loading...</p>}
-        {error && <p>Error: {error}</p>}
-        
-        <button className="add-requirement-button" onClick={handleOpenModal}>
-          Add Requirement
-        </button>
+        <div className="actions-container">
+          <Button className="add-item-button" onClick={handleOpenModal}>
+            {stage === "tasks" ? "Add Task" : "Add Requirement"}
+          </Button>
+          {stage === "requirements" && (
+            <Button className="next-stage-button" onClick={handleNextStage}>
+              Proceed to Tasks
+            </Button>
+          )}
+        </div>
 
-        {data && (
-          <div className="requirements-container">
-            {data.map((requirement, index) => (
-              <RequirementCard key={index} requirement={requirement} />
-            ))}
-          </div>
-        )}
+        {renderContent()}
       </div>
 
-      {/* Modal para agregar requerimiento */}
-      <NewRequirementModal open={isModalOpen} handleClose={handleCloseModal} onAddRequirement={handleAddRequirement} />
+      <NewRequirementModal
+        open={isModalOpen}
+        handleClose={handleCloseModal}
+        onAddItem={handleAddItem}
+        projectId={parseInt(projectId,10)}
+        ownerId={parseInt(Cookies.get("userID"),10)}
+        isTask={stage === "tasks"}
+      />
     </div>
   );
 };

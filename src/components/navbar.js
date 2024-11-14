@@ -29,7 +29,7 @@ const ExpandableNavbar = ({ onNewProject }) => {
         <div className="sidebar-logo">Neoris Sage</div>
       )}
       <div className="sidebar-links">
-        <button onClick={() => handleNavigation("/menu")} className="sidebar-button">
+        <button onClick={() => handleNavigation("/home")} className="sidebar-button">
           <HomeIcon />
           {isExpanded && " Dashboard"}
         </button>

@@ -123,10 +123,9 @@ const ProjectPage = () => {
     } else {
       return (
         <div className="requirements-container">
-          {data.map((requirement) => (
+          {Array.isArray(data) && data !== null && data.length > 0 && data.map((requirement) => (
             <RequirementCard key={requirement.requirement_id} requirement={requirement} />
           ))}
-
         </div>
       );
     }

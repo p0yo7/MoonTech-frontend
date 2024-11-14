@@ -15,8 +15,8 @@ const Projects = () => {
   const router = useRouter();
 
   // Obtener Teams
-  // Obtener usuarios por team
   const projectAreas = ["Alimenticia", "Agrícola", "Textil", "Manufactura", "Tecnología"];
+    // Obtener usuarios por team
   const companyAreas = {
     "Comercial": ["User 1", "User 2", "User 3"],
     "GDM": ["User 3", "User 4"],
@@ -131,7 +131,7 @@ const Projects = () => {
   };
 
   const handleClose = () => {
-    router.push('/dashboard'); // Ajustar esta ruta según sea necesario
+    router.push('/home'); // Ajustar esta ruta según sea necesario
   };
 
   return (

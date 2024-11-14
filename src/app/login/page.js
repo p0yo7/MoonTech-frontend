@@ -61,7 +61,7 @@ export default function Login() {
       Cookies.set('team', claims.team, { expires: 7 }); // Maneja Cookies
       Cookies.set('user_first_name', claims.user_first_name, { expires: 7 }); // Maneja Cookies
       // Redirigir al dashboard si el inicio de sesión es exitoso
-      router.push('/menu'); // Redirigir al dashboard
+      router.push('/home'); // Redirigir al dashboard
     } catch (err) {
       setError(err.message);
     } finally {

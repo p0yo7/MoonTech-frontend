@@ -8,12 +8,15 @@ import cemexImage from '../assets/cemex.png';
 import brandImage from '../assets/brand.png';
 import NewProjectModal from './newproj';
 import "./globals.css";
+import { ThemeProvider, createTheme } from '@mui/material'; // Para el Boton Azul Crear Proyecto
 
 // Componentes
 import ExpandableNavbar from '../../components/navbar';
+import CircleButton from '../../components/circlebutton';
 
 const MenuPage = () => {
   const router = useRouter();
+  const BlueButtonTheme = createTheme();
   const [isModalOpen, setModalOpen] = useState(false);
   const [isSidebarExpanded, setSidebarExpanded] = useState(false);
 
@@ -57,8 +60,14 @@ const MenuPage = () => {
         </div>
 
         {/* Botón para crear nuevo proyecto */}
-        <div className="new-project-button">
-          <button onClick={handleOpenModal}>Create New Project</button>
+        <div className="button-container">
+          <div className="button-column">
+            <div className="button-row">
+              <ThemeProvider theme={BlueButtonTheme}>
+                <CircleButton onClick={handleOpenModal} className="plus-button"/>  
+              </ThemeProvider>
+            </div>
+          </div>
         </div>
       </div>
 

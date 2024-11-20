@@ -8,6 +8,7 @@ import NewRequirementModal from "../../../../components/newrequirement";
 import TarjetaTarea from "../../../../components/tasks";
 import { Button } from "@mui/material";  // Updated import for Button
 import "./globals.css";
+import PostRequirementAIButton from "@/components/circlebuttonAI";
 
 const ProjectPage = () => {
   const { id: projectId, stage } = useParams();
@@ -31,8 +32,8 @@ const ProjectPage = () => {
         throw new Error(`Error fetching project data: ${response.statusText}`);
       }
       const data = await response.json();
-      setProjectName(data.projectInfo.project_name);
-      setProjectCompany(data.projectInfo.company_name);
+      setProjectName(data.project_name);
+      setProjectCompany(data.company_name);
     } catch (error) {
       console.error("Error fetching project data:", error);
       setError(error.message);
@@ -46,7 +47,7 @@ const ProjectPage = () => {
       requirements: `http://localhost:8080/Project/${projectId}/Requirements`,
       planning: `http://localhost:8080/project/${projectId}/planning`,
       estimation: `http://localhost:8080/project/${projectId}/getEstimation`,
-      tasks: `http://localhost:8080/project/${projectId}/tasks`,
+      tasks: `http://localhost:8080/Project/${projectId}/Tasks`,
     };
 
     const endpoint = endpoints[stage];
@@ -88,7 +89,7 @@ const ProjectPage = () => {
 
   const handleNextStage = () => {
     if (stage === "requirements") {
-      router.push(`/projects/${projectId}/tasks`);
+      router.push(`/Projects/${projectId}/Tasks`);
     }
   };
 
@@ -127,6 +128,7 @@ const ProjectPage = () => {
             <RequirementCard key={requirement.requirement_id} requirement={requirement} />
           ))}
         </div>
+
       );
     }
   };
@@ -169,6 +171,8 @@ const ProjectPage = () => {
         ownerId={parseInt(Cookies.get("userID"),10)}
         isTask={stage === "tasks"}
       />
+      <div></div>
+      <PostRequirementAIButton projectId={projectId} />
     </div>
   );
 };

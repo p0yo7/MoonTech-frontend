@@ -16,7 +16,7 @@ const style = {
   p: 4,
 };
 
-const NewRequirementModal = ({ open, handleClose, projectId, ownerId }) => {
+const NewRequirementAIModal = ({ open, handleClose, projectId, ownerId }) => {
   const [requirementText, setRequirementText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -24,13 +24,10 @@ const NewRequirementModal = ({ open, handleClose, projectId, ownerId }) => {
   const postRequirement = async (text) => {
     const requirementData = {
       ProjectID: projectId,
-      OwnerID: ownerId,
-      RequirementDescription: text,
-      approved: false
     };
     console.log(requirementData);
     try {
-      const response = await fetch(`http://localhost:8080/createRequirement`, {
+      const response = await fetch(`http://localhost:5000/ai/getAIRequirement/`, {
         method: 'POST',
         headers: {
           'Authorization': `${Cookies.get('authToken')}`,
@@ -49,10 +46,6 @@ const NewRequirementModal = ({ open, handleClose, projectId, ownerId }) => {
       console.error('Error posting requirement:', error);
       throw error;
     }
-  };
-
-  const handleGenerateWithAI = async (event) => {
-
   };
 
   const handleSubmit = async (event) => {
@@ -105,7 +98,6 @@ const NewRequirementModal = ({ open, handleClose, projectId, ownerId }) => {
             rows={4}
             placeholder="Enter your requirement description here..."
           />
-
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px', gap: '8px' }}>
             <Button 
               onClick={handleClose}
@@ -114,18 +106,14 @@ const NewRequirementModal = ({ open, handleClose, projectId, ownerId }) => {
             >
               Cancel
             </Button>
-
-            
-
             <Button 
               type="submit" 
               variant="contained" 
               color="primary"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Adding...' : 'Add Requirement'}
+              {isSubmitting ? 'Añadiendo requerimiento con AI...' : 'Add Requirement'}
             </Button>
-
           </div>
         </form>
       </Box>
@@ -133,4 +121,4 @@ const NewRequirementModal = ({ open, handleClose, projectId, ownerId }) => {
   );
 };
 
-export default NewRequirementModal;
+export default NewRequirementAIModal;

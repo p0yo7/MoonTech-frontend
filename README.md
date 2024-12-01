@@ -1,3 +1,6 @@
+Importante:
+Las funciones de A.I. requieren una API KEY de openAI, por cuestiones de seguridad no se puede subir a internet, pero se puede agregar una api key en el archivo .env, que se encuentra en la direccion backend/.env dentro de este repositorio.
+
 The business logic with the operation and the user interface were separated into two repositories, so first you have to install both and install docker desktop (https://www.docker.com/products/docker-desktop/) to monitor their correct operation.
 
 Important Links
